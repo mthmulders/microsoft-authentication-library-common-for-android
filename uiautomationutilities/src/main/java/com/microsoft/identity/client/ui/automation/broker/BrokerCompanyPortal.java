@@ -378,4 +378,53 @@ public class BrokerCompanyPortal extends AbstractTestBroker implements ITestBrok
             throw new AssertionError(e);
         }
     }
+
+    public void setupWorkProfile(@NonNull final String username,
+                                 @NonNull final String password) {
+        Logger.i(TAG, "Setup work profile for the given cred");
+        launch(); // launch CP app
+
+        handleFirstRun(); // handle CP first run
+
+        // click Sign In button on CP welcome page
+        UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/sign_in_button");
+
+        final PromptHandlerParameters promptHandlerParameters = PromptHandlerParameters.builder()
+                .prompt(PromptParameter.LOGIN)
+                .consentPageExpected(false)
+                .expectingLoginPageAccountPicker(false)
+                .sessionExpected(false)
+                .loginHint(null)
+                .build();
+
+        final AadPromptHandler aadPromptHandler = new AadPromptHandler(promptHandlerParameters);
+
+        Logger.i(TAG, "Handle prompt in AAD login page for enrolling device..");
+        // handle AAD login page
+        aadPromptHandler.handlePrompt(username, password);
+
+        // click on BEGIN button to start enroll
+        UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/setup_positive_button");
+
+        // click CONTINUE to ack privacy page
+        UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/ContinueButton");
+
+        // click the activate device admin btn
+        final UiObject workProfileSetupScreen = UiAutomatorUtils.obtainUiObjectWithText("Let's set up your work profile");
+        Assert.assertTrue(
+                "Work Profile Setup - android setup page appears",
+                workProfileSetupScreen.exists()
+        );
+
+        try {
+            UiAutomatorUtils.obtainUiObjectWithText("Accept & continue").click();
+            UiAutomatorUtils.obtainUiObjectWithText("Next").click();
+        }
+        catch (Exception e){
+            Assert.fail();
+        }
+
+        // click CONTINUE to ack privacy page
+        UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/ContinueButton");
+    }
 }

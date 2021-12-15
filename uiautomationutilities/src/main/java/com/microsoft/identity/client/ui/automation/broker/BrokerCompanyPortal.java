@@ -50,7 +50,7 @@ import java.util.Random;
 import lombok.Getter;
 
 import static com.microsoft.identity.client.ui.automation.utils.CommonUtils.FIND_UI_ELEMENT_TIMEOUT;
-import static org.junit.Assert.fail;
+import static com.microsoft.identity.client.ui.automation.utils.CommonUtils.WORK_PROFILE_SETUP_TIMEOUT;
 
 /**
  * A model for interacting with the Company Portal Broker App during UI Test.
@@ -409,22 +409,33 @@ public class BrokerCompanyPortal extends AbstractTestBroker implements ITestBrok
         // click CONTINUE to ack privacy page
         UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/ContinueButton");
 
-        // click the activate device admin btn
         final UiObject workProfileSetupScreen = UiAutomatorUtils.obtainUiObjectWithText("Let's set up your work profile");
         Assert.assertTrue(
                 "Work Profile Setup - android setup page appears",
                 workProfileSetupScreen.exists()
         );
 
+        // Device-side pages do not have resource-ids
         try {
             UiAutomatorUtils.obtainUiObjectWithText("Accept & continue").click();
             UiAutomatorUtils.obtainUiObjectWithText("Next").click();
         }
         catch (Exception e){
-            Assert.fail();
+            throw new AssertionError(e);
         }
 
-        // click CONTINUE to ack privacy page
-        UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/ContinueButton");
+        // click CONTINUE to continue work profile setup
+        UiAutomatorUtils.handleButtonClick("com.microsoft.windowsintune.companyportal:id/setup_positive_button");
+
+        // complete work profile setup
+        UiObject doneButton = UiAutomatorUtils.obtainUiObjectWithResourceId("com.microsoft.windowsintune.companyportal:id/setup_center_button");
+        doneButton.waitForExists(WORK_PROFILE_SETUP_TIMEOUT);
+        try {
+            doneButton.click();
+            UiAutomatorUtils.obtainUiObjectWithText("Got It").click();
+        }
+        catch (Exception e){
+            throw new AssertionError(e);
+        }
     }
 }

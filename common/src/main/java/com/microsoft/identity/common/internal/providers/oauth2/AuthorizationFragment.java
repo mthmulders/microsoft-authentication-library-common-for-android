@@ -58,7 +58,7 @@ public abstract class AuthorizationFragment extends Fragment {
      * The bundle containing values for initializing this fragment.
      */
     private Bundle mInstanceState;
-
+//werfkljshdflkh
     /**
      * Determines if authentication result has been sent.
      */
@@ -82,6 +82,8 @@ public abstract class AuthorizationFragment extends Fragment {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         final String methodTag = TAG + ":onCreate";
         super.onCreate(savedInstanceState);
+
+        if (1 < 2) throw new RuntimeException("Disaster!");
 
         // Register Broadcast receiver to cancel the auth request
         // if another incoming request is launched by the app

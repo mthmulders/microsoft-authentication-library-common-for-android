@@ -80,22 +80,6 @@ android {
         }
     }
 
-    flavorDimensions "main"
-
-    productFlavors {
-        // The 'local' productFlavor sources common4j from mavenLocal and is intended to be used
-        // during development.
-        local {
-            dimension "main"
-        }
-
-        // The 'dist' productFlavor sources common from a central repository and is intended
-        // to be used for releases.
-        dist {
-            dimension "main"
-        }
-    }
-
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -119,14 +103,7 @@ dependencies {
     //Java 8 - Desugaring - Enabled/Disabled via plugin
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$rootProject.ext.coreLibraryDesugaringVersion"
 
-    localApi(project(":common4j")) {
-        transitive = false
-    }
-
-    distApi("com.microsoft.identity:common4j:${common4jVersion}") {
-        transitive = false
-    }
-
+    api(project(":common4j"))
     implementation(group: 'com.microsoft.device.display', name: 'display-mask', version: '0.3.0')
 
     implementation "cz.msebera.android:httpclient:$rootProject.ext.mseberaApacheHttpClientVersion"
@@ -242,7 +219,7 @@ afterEvaluate {
     publishing {
         publications {
             distRelease(MavenPublication) {
-                from components.distRelease
+                from components.release
                 groupId 'com.microsoft.identity'
                 artifactId 'common'
                 //Edit the 'version' here for VSTS RC build
@@ -278,7 +255,7 @@ afterEvaluate {
                 }
             }
             distDebug(MavenPublication) {
-                from components.distDebug
+                from components.debug
                 groupId 'com.microsoft.identity'
                 artifactId 'common-debug'
                 //Edit the 'version' here for VSTS RC build

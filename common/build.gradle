@@ -28,7 +28,7 @@ codeCoverageReport {
     coverage.enabled = enableCodeCoverage
 }
 
-def common4jVersion = "1.0.5-telemetry"
+def common4jVersion = "1.0.5-telemetry-1"
 if (project.hasProperty("distCommon4jVersion") && project.distCommon4jVersion != '') {
     common4jVersion = project.distCommon4jVersion
 }
